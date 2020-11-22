@@ -44,59 +44,55 @@ function plotFunction(sampleID) {
             marker: {
                 colorscale: "Earth",
                 color: filterData.otu_ids,
-                size: filterData.sample_values.map((sample) => sample/1.5)
+                size: filterData.sample_values.map((sample) => sample)
             }
-}
-Plotly.newPlot("bubble", [bubbleGraph])
+        }
+        Plotly.newPlot("bubble", [bubbleGraph])
 
-
-var gaugeVisual = [
-    {
-      domain: {x: [0, 1], y: [0, 1] },
-      value: value,
-      title: {text: "Belly Button Washing Frequency" },
-      title: {text: "Scrubs per Week" },
-      type: "indicator",
-      mode: "gauge+number",
-      gauge: {
-        axis: {range: [null, 10]},
-        steps: [
-          {range: [0, 1], color: "#ccffff"},
-          {range: [1, 2], color: "#c4f7d9"},
-          {range: [2, 3], color: "#bdf0b2"},
-          {range: [3, 4], color: "#b5e88c"},
-          {range: [4, 5], color: "#b0e373"},
-          {range: [5, 6], color: "#abde59"},
-          {range: [6, 7], color: "#a6d940"},
-          {range: [7, 8], color: "#a1d426"},
-          {range: [8, 9], color: "#9ed119"},
-          {range: [9, 10], color: "#669900"}
-        ],
-      }
-    }
-  ];
-var layout = {
-    margin: {t: 0, b: 0}
+        // basic gauge
+        var gaugeVisual = [
+            {
+                domain: {x: [0, 1], y: [0, 1] },
+                value: value,
+                title: {text: "Belly Button Washing Frequency" },
+                title: {text: "Scrubs per Week" },
+                type: "indicator",
+                mode: "gauge+number",
+                gauge: {
+                    axis: {range: [null, 10]},
+                    steps: [
+                    {range: [0, 1], color: "#ccffff"},
+                    {range: [1, 2], color: "#c4f7d9"},
+                    {range: [2, 3], color: "#bdf0b2"},
+                    {range: [3, 4], color: "#b5e88c"},
+                    {range: [4, 5], color: "#b0e373"},
+                    {range: [5, 6], color: "#abde59"},
+                    {range: [6, 7], color: "#a6d940"},
+                    {range: [7, 8], color: "#a1d426"},
+                    {range: [8, 9], color: "#9ed119"},
+                    {range: [9, 10], color: "#669900"}
+                    ],
+                }
+            }
+        ];
+    var layout = {
+        margin: {t: 0, b: 0}
+        };
+    Plotly.newPlot("gauge", gaugeVisual, layout);
+    })
 };
-Plotly.newPlot("gauge", gaugeVisual, layout);
-})
-};
 
+// demographic info panel
 function buildTable(sampleID) {
 var table = d3.select("#sample-metadata")
-
 d3.json("data/samples.json").then((data) => {
-var filterData = data.metadata.filter((meta) => meta.id==sampleID)[0];
-Object.entries(filterData).forEach(([meta_key, meta_value]) => {
-    table.append("h5").text(`${meta_key}: ${meta_value}`);
-})
-})
+    var filterData = data.metadata.filter((meta) => meta.id==sampleID)[0];
+        Object.entries(filterData).forEach(([meta_key, meta_value]) => {
+            table.append("h5").text(`${meta_key}: ${meta_value}`);
+        })
+    })
 };
 
-function deleteCurrent() {
-d3.select("#sample-metadata").selectAll("h5").remove();
-}
-
-
-plotFunction(940);
-buildTable(940);
+// render, connect to dropdown menu
+plotFunction(941);
+buildTable(941);
