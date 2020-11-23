@@ -1,15 +1,3 @@
-// dropdown
-function dropDown() {
-    d3.json("data/samples.json").then(data => {
-        data.names.forEach(x => {
-            d3.select("#selDataset").append("option").text(x).attr("value", function() {
-            return x;
-            });
-        });
-    });
-}
-dropDown();
-
 
 // grab json data
 d3.json("data/samples.json").then((data) => {
@@ -17,8 +5,8 @@ d3.json("data/samples.json").then((data) => {
     dropDown(data);
 })
 
-// plot function
-function plotFunction(sampleID) {
+// build function
+function build(sampleID) {
     d3.json("data/samples.json").then((data) => {
         var filterData = data.samples.filter((sample) => sample.id==sampleID)[0];
         var value = (filterData.sample_values.reduce((a,b)=> a+b)/filterData.sample_values.length)/10;
@@ -54,8 +42,7 @@ function plotFunction(sampleID) {
             {
                 domain: {x: [0, 1], y: [0, 1] },
                 value: value,
-                title: {text: "Belly Button Washing Frequency" },
-                title: {text: "Scrubs per Week" },
+                title: {text: "Bellybutton Scrubs per Week" },
                 type: "indicator",
                 mode: "gauge+number",
                 gauge: {
@@ -75,24 +62,43 @@ function plotFunction(sampleID) {
                 }
             }
         ];
-    var layout = {
-        margin: {t: 0, b: 0}
-        };
-    Plotly.newPlot("gauge", gaugeVisual, layout);
-    })
-};
+        var layout = {
+            margin: {t: 0, b: 0}
+            };
+        Plotly.newPlot("gauge", gaugeVisual, layout)
 
-// demographic info panel
-function buildTable(sampleID) {
-var table = d3.select("#sample-metadata")
-d3.json("data/samples.json").then((data) => {
-    var filterData = data.metadata.filter((meta) => meta.id==sampleID)[0];
-        Object.entries(filterData).forEach(([meta_key, meta_value]) => {
-            table.append("h5").text(`${meta_key}: ${meta_value}`);
+        // demographic info panel
+        function deleteCurrent() {
+            d3.select("#sample-metadata").selectAll("h5").remove();
+        }
+        deleteCurrent(data.names[0]);
+        var table = d3.select("#sample-metadata")
+        d3.json("data/samples.json").then((data) => {
+        var filterData = data.metadata.filter((meta) => meta.id==sampleID)[0];
+            Object.entries(filterData).forEach(([meta_key, meta_value]) => {
+                table.append("h5").text(`${meta_key}: ${meta_value}`);
+            })
         })
     })
 };
 
-// render, connect to dropdown menu
-plotFunction(941);
-buildTable(941);
+function optionChanged(sampleID){
+    build(sampleID);
+}
+
+// dropdown menu and execute function
+function execute() {
+    d3.json("data/samples.json").then(data => {
+        data.names.forEach(x => {
+            d3.select("#selDataset").append("option").text(x).attr("value", function() {
+            return x;
+            });
+        });
+        build(data.names[0])
+    });
+}; 
+
+execute();
+
+
+
